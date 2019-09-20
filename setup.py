@@ -12,7 +12,7 @@ Where possible, tasks are accelerated by the [NumExpr](https://github.com/pydata
 
 keywords = 'cryoEM cryo-EM focus single-particle tomography subtomogram-averaging electron-microscopy'
 
-url = 'https://github.com/C-CINA/focus-utilities'
+url = 'https://github.com/C-CINA/focustools'
 
 author = 'Ricardo Righetto'
 author_email = 'ricardo.righetto@unibas.ch'
@@ -30,7 +30,7 @@ setup(
     author_email=author_email,
     license=license,
     packages=find_packages(),
-    scripts = ['bin/focus.postprocess','bin/focus.ctfapply'],
+    scripts = ['bin/focus.postprocess','bin/focus.ctfapply','bin/focus.mrcz'],
     include_package_data = True,
     install_requires=[
         'numpy>=1.11',
