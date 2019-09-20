@@ -1,5 +1,5 @@
 # FOCUS TOOLS
-Python utilities supporting the FOCUS package and cryo-EM data processing in general.
+Python utilities supporting the [FOCUS package](http://focus-em.org) and cryo-EM data processing in general.
 
 FOCUS TOOLS offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the tools contained here were developed to support the FOCUS package.
 
@@ -26,5 +26,5 @@ If FOCUS TOOLS is useful in your work, please cite the following papers:
 Please use the [issue tracker](https://github.com/C-CINA/focustools/issues) to report bugs or ask for help.
 
 ## Authors
-FOCUS TOOLS is developed by [Ricardo Righetto](https://github.com/rdrighetto/) at the [Stahlberg lab](http://c-cina.org) together with the [FOCUS package](http://focus-em.org).
+FOCUS TOOLS is developed by [Ricardo Righetto](https://github.com/rdrighetto/) at the [Stahlberg lab](http://c-cina.org).
 
