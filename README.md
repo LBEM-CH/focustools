@@ -12,7 +12,7 @@ FOCUS TOOLS can be installed from [PyPI](http://pypi.org) using `pip`:
 
 `sudo pip install focustools`
 
-If not using `sudo`, it will be installed locally in the user `HOME`. In this case, make sure you have the following location in your `PATH` environment variable:
+If not using `sudo`, it will be installed locally in the user `HOME`. In this case, make sure you have the following location in your `PATH` environment variable in order to be able to call the scripts directly:
 `~/.local/bin/`
 
 ## Citing
