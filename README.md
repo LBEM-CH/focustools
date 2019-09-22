@@ -1,12 +1,14 @@
 # FOCUS TOOLS
 Python utilities supporting the [FOCUS package](http://focus-em.org) and cryo-EM data processing in general.
 
-FOCUS TOOLS offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the scripts and functions contained here were developed to support the FOCUS package, others were written for the developer's own studies or mere convenience.  
-The I/O of MRC files is based on the [MRCZ library](https://github.com/em-MRCZ/python-mrcz).  
+__FOCUS TOOLS__ offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the scripts and functions contained here were developed to support the FOCUS package, others were written for the developer's own studies or mere convenience.
+
+The I/O of MRC files (with or without compression) is based on the [MRCZ library](https://github.com/em-MRCZ/python-mrcz).
+
 Where possible, tasks are accelerated by the [NumExpr](https://github.com/pydata/numexpr) engine.
 
 ## Installation
-FOCUS TOOLS can be installed from [PyPI](http://pypi.org) using `pip`:
+__FOCUS TOOLS__ can be installed from [PyPI](http://pypi.org) using `pip`:
 
 `sudo pip install focustools`
 
@@ -25,7 +27,7 @@ Once installed, the scripts can be called directly from your shell, for example:
 
 ## Citing
 
-If FOCUS TOOLS in general is useful in your work, please cite:
+If __FOCUS TOOLS__ in general is useful in your work, please cite:
 * Biyani, N., Righetto, R.D., McLeod, R., Caujolle-Bert, D., Castano-Diez, D., Goldie, K.N., Stahlberg, H., 2017. _Focus: The interface between data collection and data processing in cryo-EM_. J. Struct. Biol. 198, 124–133. https://doi.org/10.1016/j.jsb.2017.03.007
 
 If `focus.postprocess` is useful in your work, please cite:
@@ -46,6 +48,6 @@ Use the `--help` flag to obtain a comprehensive list of options to the desired s
 Please use the [issue tracker](https://github.com/C-CINA/focustools/issues) to report bugs or ask for help, suggest features, etc.
 
 ## Authors
-FOCUS TOOLS was initially developed by [Ricardo Righetto](https://github.com/rdrighetto/) at the [Stahlberg lab](http://c-cina.org).  
+__FOCUS TOOLS__ was initially developed by [Ricardo Righetto](https://github.com/rdrighetto/) at the [Stahlberg lab](http://c-cina.org).  
 The `FCC()` function was written by Robert A. McLeod.
 
