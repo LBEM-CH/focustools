@@ -1,10 +1,8 @@
 # FOCUS TOOLS
 Python utilities supporting the [FOCUS package](http://focus-em.org) and cryo-EM data processing in general.
 
-FOCUS TOOLS offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the scripts and functions contained here were developed to support the FOCUS package, others were written for the developer's own studies or mere convenience.
-
-The I/O of MRC files is based on the [MRCZ library](https://github.com/em-MRCZ/python-mrcz).
-
+FOCUS TOOLS offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the scripts and functions contained here were developed to support the FOCUS package, others were written for the developer's own studies or mere convenience.  
+The I/O of MRC files is based on the [MRCZ library](https://github.com/em-MRCZ/python-mrcz).  
 Where possible, tasks are accelerated by the [NumExpr](https://github.com/pydata/numexpr) engine.
 
 ## Installation
@@ -17,7 +15,7 @@ If not using `sudo`, it will be installed locally in the user `HOME`. In this ca
 
 ## Contents
 
-Please see the [release notes](https://github.com/C-CINA/focustools/RELEASE_NOTES.md).
+Please see the [release notes](RELEASE_NOTES.md).
 
 ## Usage
 
@@ -48,6 +46,6 @@ Use the `--help` flag to obtain a comprehensive list of options to the desired s
 Please use the [issue tracker](https://github.com/C-CINA/focustools/issues) to report bugs or ask for help, suggest features, etc.
 
 ## Authors
-FOCUS TOOLS was initially developed by [Ricardo Righetto](https://github.com/rdrighetto/) at the [Stahlberg lab](http://c-cina.org).
+FOCUS TOOLS was initially developed by [Ricardo Righetto](https://github.com/rdrighetto/) at the [Stahlberg lab](http://c-cina.org).  
 The `FCC()` function was written by Robert A. McLeod.
 
