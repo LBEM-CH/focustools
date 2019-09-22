@@ -1,13 +1,13 @@
 # 0.1.0
 
-Initial commit containing
+Initial commit containing:
 
-`bin/`
-focus.ctfapply
-focus.mrcz
-focus.postprocess
+`bin/`  
+focus.ctfapply  
+focus.mrcz  
+focus.postprocess  
 
-`focustools/utils.py`
+`focustools/utils.py`  
 RadialIndices(imsize=[100, 100], rounding=True, normalize=False, rfft=False, xyz=[0, 0, 0], nozero=True)  
 Shift(img, shift=[0, 0, 0])  
 Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1)  
