@@ -33,7 +33,7 @@ If __FOCUS TOOLS__ in general is useful in your work, please cite:
 If `focus.postprocess` is useful in your work, please cite:
 * Righetto, R.D., Biyani, N., Kowal, J., Chami, M., Stahlberg, H., 2019. _Retrieving high-resolution information from disordered 2D crystals by single-particle cryo-EM_. Nat. Commun. 10, 1722. https://doi.org/10.1038/s41467-019-09661-5
 
-If `focus.mrcz` or the MRCZ library are useful in your work, please cite:
+If `focus.mrcz` or the [MRCZ library](https://github.com/em-MRCZ/python-mrcz) are useful in your work, please cite:
 * McLeod, R.A., Diogo Righetto, R., Stewart, A., Stahlberg, H., 2018. _MRCZ – A file format for cryo-TEM data with fast compression_. J. Struct. Biol. 201, 252–257. https://doi.org/10.1016/j.jsb.2017.11.012
 
 ## Usage
