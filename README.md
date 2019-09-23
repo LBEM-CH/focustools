@@ -1,7 +1,7 @@
 # FOCUS TOOLS
 Python utilities supporting the [FOCUS package](http://focus-em.org) and cryo-EM data processing in general.
 
-__FOCUS TOOLS__ offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the scripts and functions contained here were developed to support the FOCUS package, others were written for the developer's own studies or mere convenience.
+__FOCUS TOOLS__ offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the scripts and functions contained here were developed to support the FOCUS package. Others were written for the developer's own studies or mere convenience, and are made available here in the hope they can be useful to someone else.
 
 The I/O of MRC files (with or without compression) is based on the [MRCZ library](https://github.com/em-MRCZ/python-mrcz).
 
