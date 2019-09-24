@@ -35,6 +35,7 @@ For more details, see our [Jupyter notebook](http://jupyter.org/install) tutoria
 
 * [`focus.postprocess`](tutorial/tutorial_postprocess.ipynb)
 * [`focus.mrcz`](tutorial/tutorial_mrcz.ipynb)
+* [`focus.ctfapply`](tutorial/tutorial_ctfapply.ipynb)
 
 ## Citing
 
