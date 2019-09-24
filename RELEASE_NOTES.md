@@ -1,3 +1,7 @@
+# 0.1.2
+
+Another bugfix in `focustools/util.py`
+
 # 0.1.1
 
 Bug fixes in:

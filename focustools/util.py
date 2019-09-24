@@ -2099,7 +2099,7 @@ def AdhocSSNR(imsize=[100, 100], apix=1.0, DF=1000.0, WGH=0.1, Cs=2.7, kV=300.0,
         # https://www.biorxiv.org/content/10.1101/338558v1
         # https://github.com/dtegunov/tom_deconv/blob/master/tom_deconv.m
 
-    rmesh = util.RadialIndices(
+    rmesh = RadialIndices(
         imsize, rounding=False, normalize=True, rfft=True)[0]
     ne.evaluate("rmesh / apix", out=rmesh)
     # The ad hoc SSNR exponential falloff
