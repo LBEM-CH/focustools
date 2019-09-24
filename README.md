@@ -31,7 +31,7 @@ Use the `--help` flag to obtain a comprehensive list of options to the desired s
 
 ### Tutorials
 
-For more details, see our [Jupyter notebook](http://jupyter.org/install) tutorials below:
+For more details, see our [Jupyter notebook](http://jupyter.org/install) tutorials:
 
 * [`focus.postprocess`](tutorial/tutorial_postprocess.ipynb)
 * [`focus.mrcz`](tutorial/tutorial_mrcz.ipynb)
@@ -46,6 +46,8 @@ If `focus.postprocess` is useful in your work, please cite:
 
 If `focus.mrcz` or the [MRCZ library](https://github.com/em-MRCZ/python-mrcz) are useful in your work, please cite:
 * McLeod, R.A., Diogo Righetto, R., Stewart, A., Stahlberg, H., 2018. _MRCZ – A file format for cryo-TEM data with fast compression_. J. Struct. Biol. 201, 252–257. https://doi.org/10.1016/j.jsb.2017.11.012
+
+References for specific methods implemented in __FOCUS TOOLS__ that are published elsewhere can be obtained by calling the scripts with the `--help` option or from the source code directly.
 
 ## Reporting bugs & Troubleshooting
 
