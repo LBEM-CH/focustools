@@ -1986,7 +1986,7 @@ def CTF(imsize=[100, 100], DF1=1000.0, DF2=None, AST=0.0, WGH=0.10, Cs=2.7, kV=3
 
     if B != 0.0:  # Apply B-factor only if necessary:
 
-        ne.evaluate("CTFim * np.exp(-B * (rmesh2) / 4)", out=CTFim)
+        ne.evaluate("CTFim * exp(-B * (rmesh2) / 4)", out=CTFim)
 
     return CTFim
 

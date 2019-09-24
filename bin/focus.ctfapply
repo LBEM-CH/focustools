@@ -7,7 +7,7 @@
 # (C) focus-em.org, GNU Public License.                                     #
 #                                                                           #
 # Created..........: 27/02/2017                                             #
-# Last Modification: 20/09/2019                                             #
+# Last Modification: 24/09/2019                                             #
 # Author...........: Ricardo Righetto                                       #
 #                                                                           #
 # This Python script is distributed with the Focus package                  #
@@ -103,7 +103,7 @@ def main():
                       help="Fall=off parameter for the denoising filter (see option --denoise). Higher means")
 
     parser.add_option("--denoise_lp_skip", action="store_true", default=False,
-                      help="The denoising filter by default will have a smooth low-pass effect that enforces filtering out any information beyond the first zero of the CTF. Use this option to skip this filter (i.e. potentially include information beyond the first CTF zero).")
+                      help="The denoising filter by default will have a smooth low-pass effect that enforces filtering out any information beyond the first zero of the util. Use this option to skip this filter (i.e. potentially include information beyond the first CTF zero).")
 
     parser.add_option("--save_ctf_2d", action="store_true",
                       default=False, help="Return an image containing the 2D CTF?")
@@ -143,14 +143,14 @@ def main():
         if options.denoise:
 
             options.wiener_filter = True
-            ssnr = CTF.AdhocSSNR(imsize=mrc[0, :, :].shape, apix=options.angpix, DF=0.5 * (options.df1 + options.df2),
+            ssnr = util.AdhocSSNR(imsize=mrc[0, :, :].shape, apix=options.angpix, DF=0.5 * (options.df1 + options.df2),
                                  WGH=options.ampcon, Cs=options.cs, kV=options.kv, S=options.denoise_S, F=options.denoise_F, hp_frac=0.01, lp=not options.denoise_lp_skip)
 
             options.wiener_constant = 1 / ssnr
 
         for i in np.arange(mrc.shape[0]):
 
-            CTFcor = CTF.CorrectCTF(mrc[i, :, :], DF1=options.df1, DF2=options.df2, AST=options.ast, WGH=options.ampcon, invert_contrast=options.invert, Cs=options.cs, kV=options.kv,
+            CTFcor = util.CorrectCTF(mrc[i, :, :], DF1=options.df1, DF2=options.df2, AST=options.ast, WGH=options.ampcon, invert_contrast=options.invert, Cs=options.cs, kV=options.kv,
                                     apix=options.angpix, phase_flip=options.phase_flip, ctf_multiply=options.ctf_multiply, wiener_filter=options.wiener_filter, C=options.wiener_constant, return_ctf=False)
 
             if CTFcor[-1] != []:
@@ -166,6 +166,9 @@ def main():
         sys.stdout = sys.__stdout__
 
     if options.save_ctf_1d:
+
+        if options.out == None:
+            options.out = "ctf"
 
         if args != []:
 
@@ -186,7 +189,7 @@ def main():
 
         x = np.fft.rfftfreq(imsize) / options.angpix
 
-        y = CTF.CTF(imsize, DF1=dfavg, DF2=dfavg, AST=0.0, WGH=options.ampcon,
+        y = util.CTF(imsize, DF1=dfavg, DF2=dfavg, AST=0.0, WGH=options.ampcon,
                     Cs=options.cs, kV=options.kv, apix=options.angpix, B=options.bfac, rfft=True)
         # print len(x),len(y)
 
@@ -221,7 +224,7 @@ def main():
         if options.ctf_multiply:
 
             # CTF without envelope (B-factor):
-            ynoenv = CTF.CTF(imsize, DF1=dfavg, DF2=dfavg, AST=0.0, WGH=options.ampcon,
+            ynoenv = util.CTF(imsize, DF1=dfavg, DF2=dfavg, AST=0.0, WGH=options.ampcon,
                              Cs=options.cs, kV=options.kv, apix=options.angpix, B=0.0, rfft=True)
 
             fig = plt.figure()
@@ -238,7 +241,7 @@ def main():
         if options.wiener_filter:
 
             # CTF without envelope (B-factor):
-            ynoenv = CTF.CTF(imsize, DF1=dfavg, DF2=dfavg, AST=0.0, WGH=options.ampcon,
+            ynoenv = util.CTF(imsize, DF1=dfavg, DF2=dfavg, AST=0.0, WGH=options.ampcon,
                              Cs=options.cs, kV=options.kv, apix=options.angpix, B=0.0, rfft=True)
 
             fig = plt.figure()
@@ -254,6 +257,9 @@ def main():
             plt.close()
 
     if options.save_ctf_2d:
+
+        if options.out == None:
+            options.out = "ctf"
 
         if args != []:
 
@@ -273,7 +279,7 @@ def main():
 
         # x = np.fft.fftfreq( imsize[-1] ) / options.angpix
 
-        y = CTF.CTF(imsize, DF1=options.df1, DF2=options.df2, AST=options.ast, WGH=options.ampcon,
+        y = util.CTF(imsize, DF1=options.df1, DF2=options.df2, AST=options.ast, WGH=options.ampcon,
                     Cs=options.cs, kV=options.kv, apix=options.angpix, B=options.bfac, rfft=False)
         # print len(x),len(y)
 
@@ -303,7 +309,7 @@ def main():
         if options.ctf_multiply:
 
             # CTF without envelope (B-factor):
-            ynoenv = CTF.CTF(imsize, DF1=options.df1, DF2=options.df2, AST=options.ast, WGH=options.ampcon,
+            ynoenv = util.CTF(imsize, DF1=options.df1, DF2=options.df2, AST=options.ast, WGH=options.ampcon,
                              Cs=options.cs, kV=options.kv, apix=options.angpix, B=options.bfac, rfft=False)
 
             ynoenv = np.fft.ifftshift(ynoenv)
@@ -317,7 +323,7 @@ def main():
         if options.wiener_filter:
 
             # CTF without envelope (B-factor):
-            ynoenv = CTF.CTF(imsize, DF1=options.df1, DF2=options.df2, AST=options.ast, WGH=options.ampcon,
+            ynoenv = util.CTF(imsize, DF1=options.df1, DF2=options.df2, AST=options.ast, WGH=options.ampcon,
                              Cs=options.cs, kV=options.kv, apix=options.angpix, B=options.bfac, rfft=False)
 
             ynoenv = np.fft.ifftshift(ynoenv)

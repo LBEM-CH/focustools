@@ -39,7 +39,7 @@ def main():
 	parser = OptionParser(usage)
 
 	parser.add_option("--compressor", metavar='zstd', type="string", default='zstd',
-					  help="Will use this compressor. Options are: blosclz, lz4, lz4hc, snappy, zlib or zstd (default).")
+					  help="Will use this compressor. Options are: blosclz, lz4, lz4hc, zlib or zstd (default).")
 
 	parser.add_option("--decompress", action="store_true", help="Decompress the input files.", default=False)
 
