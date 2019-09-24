@@ -34,6 +34,7 @@ Use the `--help` flag to obtain a comprehensive list of options to the desired s
 For more details, see our [Jupyter notebook](http://jupyter.org/install) tutorials below:
 
 * [`focus.postprocess`](tutorial/tutorial_postprocess.ipynb)
+* [`focus.mrcz`](tutorial/tutorial_mrcz.ipynb)
 
 ## Citing
 
