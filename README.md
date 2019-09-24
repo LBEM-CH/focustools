@@ -25,6 +25,16 @@ Once installed, the scripts can be called directly from your shell, for example:
 
 `focus.postprocess half1.mrc half2.mrc --angpix 0.639 --automask --auto_bfac -1,-1 --mtf data_mtf_k2_300kv.star --out postprocessed`
 
+Use the `--help` flag to obtain a comprehensive list of options to the desired script, e.g.
+
+`focus.postprocess --help`
+
+### Tutorials
+
+For more details, see our [Jupyter notebook](http://jupyter.org/install) tutorials below:
+
+* [`focus.postprocess`](tutorial/tutorial_postprocess.ipynb)
+
 ## Citing
 
 If __FOCUS TOOLS__ in general is useful in your work, please cite:
@@ -35,13 +45,6 @@ If `focus.postprocess` is useful in your work, please cite:
 
 If `focus.mrcz` or the [MRCZ library](https://github.com/em-MRCZ/python-mrcz) are useful in your work, please cite:
 * McLeod, R.A., Diogo Righetto, R., Stewart, A., Stahlberg, H., 2018. _MRCZ – A file format for cryo-TEM data with fast compression_. J. Struct. Biol. 201, 252–257. https://doi.org/10.1016/j.jsb.2017.11.012
-
-## Usage
-
-Use the `--help` flag to obtain a comprehensive list of options to the desired script, e.g.
-
-`focus.postprocess --help`
-
 
 ## Reporting bugs & Troubleshooting
 
