@@ -1,3 +1,7 @@
+# 0.1.3
+
+Fixed x-label in CTF plots of `bin/focus.ctfapply`
+
 # 0.1.2
 
 Another bugfix in `focustools/util.py`
