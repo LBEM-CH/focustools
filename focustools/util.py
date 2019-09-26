@@ -656,7 +656,7 @@ def SoftMask(imsize=[100, 100], radius=0.5, width=6.0, rounding=False, xyz=[0, 0
     return mask
 
 
-def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_width=3.0, absolute_threshold=None, fraction_threshold=None, sigma_threshold=1.0, expand_width=3.0, expand_soft_width=3.0, floodfill_rad=-1, floodfill_xyz=[0, 0, 0], floodfill_fraction=-1, verbose=False):
+def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_width=3.0, absolute_threshold=None, fraction_threshold=None, sigma_threshold=1.0, expand_width=3.0, expand_soft_width=3.0, floodfill_rad=None, floodfill_xyz=[0, 0, 0], floodfill_fraction=None, verbose=False):
     # Creates a "smart" soft mask based on an input volume.
     # Similar to EMAN2 mask.auto3d processor and relion_mask_create.
 
@@ -718,7 +718,7 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
         print("Binary mask will be expanded by %.1f voxels plus a soft cosine-edge of %.1f voxels." %
               (expand_width, expand_soft_width))
 
-    if floodfill_rad < 0 and floodfill_fraction < 0:
+    if floodfill_rad == None and floodfill_fraction == None:
 
         if verbose:
 
@@ -729,7 +729,7 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
 
     else:
 
-        if floodfill_fraction < 0:
+        if floodfill_fraction == None:
 
             if verbose:
 

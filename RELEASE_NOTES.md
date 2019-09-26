@@ -1,3 +1,7 @@
+# 0.1.4
+
+Fixed default argument bugs in `AutoMask()` of `focustools/util.py`
+
 # 0.1.3
 
 Fixed x-label in CTF plots of `bin/focus.ctfapply`
