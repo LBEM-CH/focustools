@@ -215,6 +215,9 @@ def main():
     parser.add_option("--randomize_below_fsc", metavar=0.8, type="float", default=None,
                       help="If provided, will randomize phases for all Fourier shells beyond the point where the FSC drops below this value, to assess correlations introduced by the mask by High-Resolution Noise Substitution (Chen et al, Ultramicroscopy 2013). Be aware that this procedure may introduce a 'dip' in the FSC curves at the corresponding resolution value, but that is normal.")
 
+    parser.add_option("--randomize_beyond", metavar=10, type="float", default=None,
+                      help="If provided, will randomize phases for all Fourier shells beyond this resolution shell, to assess correlations introduced by the mask by High-Resolution Noise Substitution (Chen et al, Ultramicroscopy 2013). Be aware that this procedure may introduce a 'dip' in the FSC curves at the corresponding resolution value, but that is normal.")
+
     parser.add_option("--random_seed", metavar=123456789, type="int", default=123456789,
                       help="Choose the random seed for High-Resolution Noise Substitution (see option --randomize_below_fsc above)")
 
@@ -814,7 +817,7 @@ def main():
             if options.xml:
               util.Fsc2Xml( options.out+'_fsc-masked.xml', freq, fsc_mask[:NSAM] )
 
-            if options.randomize_below_fsc == None:
+            if options.randomize_below_fsc == None and options.randomize_beyond == None:
 
                 # Plot
                 plt.figure()
@@ -859,11 +862,18 @@ def main():
 
             else:
 
-                rand_res = util.ResolutionAtThreshold(
-                    freq[1:], fsc[1:NSAM], options.randomize_below_fsc, fsc_interp)
+                if options.randomize_beyond == None:
+
+                  rand_res = util.ResolutionAtThreshold(
+                      freq[1:], fsc[1:NSAM], options.randomize_below_fsc, fsc_interp)
+
+                else:
+
+                  rand_res = options.randomize_beyond
+
                 print('\nRandomizing phases beyond %.3f A...\n' % rand_res)
                 rand_freq = 1.0 / rand_res
-
+                
                 # We have to enforce the random seed otherwise different runs would not be comparable
                 map1randphase = util.HighResolutionNoiseSubstitution(
                     map1, apix=options.angpix, lp=rand_res, random_seed=options.random_seed )
