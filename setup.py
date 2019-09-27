@@ -30,7 +30,7 @@ setup(
     author_email=author_email,
     license=license,
     packages=find_packages(),
-    scripts = ['bin/focus.postprocess','bin/focus.ctfapply','bin/focus.mrcz'],
+    scripts = ['bin/focus.postprocess','bin/focus.ctf','bin/focus.mrcz'],
     include_package_data = True,
     install_requires=[
         'numpy>=1.11',

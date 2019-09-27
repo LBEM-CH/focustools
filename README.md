@@ -33,10 +33,10 @@ Use the `--help` flag to obtain a comprehensive list of options to the desired s
 
 For more details, see our [Jupyter notebook](http://jupyter.org/install) tutorials:
 
-* [`focus.postprocess`](tutorial/tutorial_postprocess.ipynb)
-* [`focus.mrcz`](tutorial/tutorial_mrcz.ipynb)
-* [`focus.ctfapply`](tutorial/tutorial_ctfapply.ipynb)
-* [`focustools` Python module](tutorial/tutorial_focustools.ipynb): a brief guide to using the functions implemented in __FOCUS TOOLS__
+* [`focus.postprocess`](tutorial/tutorial_postprocess.ipynb) script
+* [`focus.mrcz`](tutorial/tutorial_mrcz.ipynb) script
+* [`focus.ctf`](tutorial/tutorial_ctf.ipynb) script
+* [`focustools`](tutorial/tutorial_focustools.ipynb) module: a brief guide to using the Python functions implemented in __FOCUS TOOLS__
 
 ## Citing
 

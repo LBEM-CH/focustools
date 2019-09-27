@@ -114,6 +114,12 @@ def main():
     parser.add_option("--nsamples", metavar=1024, default=1024, type="int",
                       help="Number of samples to generate 1D and 2D theoretical CTF profiles. If used together with an input image, this will automatically be set to the number of samples corresponding to the image size.")
 
+    parser.add_option("--svg", action="store_true", default=False,
+                      help="Save figures in SVG format instead of PNG.")
+
+    parser.add_option("--transparent", action="store_true",
+                      default=False, help="Save figures with transparent background.")
+
     parser.add_option("--dpi", metavar=300, type="int", default=300,
                       help="Resolution of the PNG files to store the 1D CTF (assumes non-astigmatic data).")
 
@@ -122,6 +128,14 @@ def main():
     command = ' '.join(sys.argv)
 
     # print args
+
+    if options.svg:
+
+        ext = '.svg'
+
+    else:
+
+        ext = '.png'
 
     if args != []:
 
@@ -205,7 +219,8 @@ def main():
         plt.xlabel(r'Spatial frequency (1/$\rm \AA$)')
         plt.ylabel('CTF')
         plt.title('Contrast Transfer Function')
-        fig.savefig(options.out + '_1d.png', dpi=options.dpi)
+        fig.savefig(options.out + '_1d' + ext,
+                    dpi=options.dpi, transparent=options.transparent)
         plt.close()
 
         if options.phase_flip:
@@ -218,7 +233,8 @@ def main():
             plt.xlabel(r'Spatial frequency (1/$\rm \AA$)')
             plt.ylabel('CTF')
             plt.title('CTF - Phase Flipped')
-            fig.savefig(options.out + '_1d-phase_flipped.png', dpi=options.dpi)
+            fig.savefig(options.out + '_1d-phase_flipped' + ext,
+                    dpi=options.dpi, transparent=options.transparent)
             plt.close()
 
         if options.ctf_multiply:
@@ -234,8 +250,8 @@ def main():
             plt.xlabel(r'Spatial frequency (1/$\rm \AA$)')
             plt.ylabel('CTF')
             plt.title('CTF - CTF Multiplied')
-            fig.savefig(options.out + '_1d-ctf_multiplied.png',
-                        dpi=options.dpi)
+            fig.savefig(options.out + '_1d-ctf_multiplied' + ext,
+                    dpi=options.dpi, transparent=options.transparent)
             plt.close()
 
         if options.wiener_filter:
@@ -252,8 +268,8 @@ def main():
             plt.xlabel(r'Spatial frequency (1/$\rm \AA$)')
             plt.ylabel('CTF')
             plt.title('CTF - Wiener filtered')
-            fig.savefig(options.out + '_1d-wiener_filtered.png',
-                        dpi=options.dpi)
+            fig.savefig(options.out + '_1d-wiener_filtered' + ext,
+                    dpi=options.dpi, transparent=options.transparent)
             plt.close()
 
     if options.save_ctf_2d:
