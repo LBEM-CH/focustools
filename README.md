@@ -36,6 +36,7 @@ For more details, see our [Jupyter notebook](http://jupyter.org/install) tutoria
 * [`focus.postprocess`](tutorial/tutorial_postprocess.ipynb)
 * [`focus.mrcz`](tutorial/tutorial_mrcz.ipynb)
 * [`focus.ctfapply`](tutorial/tutorial_ctfapply.ipynb)
+* [`focustools` Python module](tutorial/tutorial_focustools.ipynb): a brief guide to using the functions implemented in __FOCUS TOOLS__
 
 ## Citing
 
