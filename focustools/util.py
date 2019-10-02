@@ -268,29 +268,34 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
         rotmat = np.matrix([[np.cos(psi), -np.sin(psi)],
                             [np.sin(psi), np.cos(psi)]])
 
-        sqrt2 = np.sqrt(2)
-
-        ymeshrot = (sqrt2 * imsize[1] - imsize[1]) // 2 + ymesh * \
+        ymeshrot = ymesh * \
             rotmat[0, 0] + xmesh * rotmat[1, 0] + imsize[1] // 2 - m[1]
-        xmeshrot = (sqrt2 * imsize[0] - imsize[0]) // 2 + ymesh * \
+        xmeshrot = ymesh * \
             rotmat[0, 1] + xmesh * rotmat[1, 1] + imsize[0] // 2 - m[0]
 
-        img2 = Resize(img, newsize=imsize * sqrt2 + 1)
-        del img
-
-        rotimg = np.zeros(img2.shape)
+        rotimg = np.zeros(img.shape)
+        
+        valid = np.zeros(img.shape, dtype='bool')
+        imsizemax = imsize[0]
+        ne.evaluate("ymeshrot**2 + xmeshrot**2 <= imsizemax**2", out=valid)
+        
+#         plt.imshow(valid,cmap=cm.gray)
 
         if interpolation == 'nearest':
+            
+#             valid_y = np.logical_and(ymeshrot < ymeshmax, ymeshrot > ymeshmin)
+#             valid_x = np.logical_and(xmeshrot < xmeshmax, xmeshrot > xmeshmin)
+#             valid = np.logical_and(valid_y, valid_x)
 
-            rotimg = img2[np.round(xmeshrot).astype(
-                'int'), np.round(ymeshrot).astype('int')]
+            rotimg[valid] = img[np.round(xmeshrot[valid]).astype(
+                'int'), np.round(ymeshrot[valid]).astype('int')]
 
         else:
 
-            x0 = np.floor(xmeshrot).astype('int')
-            x1 = np.ceil(xmeshrot).astype('int')
-            y0 = np.floor(ymeshrot).astype('int')
-            y1 = np.ceil(ymeshrot).astype('int')
+            x0 = np.floor(xmeshrot).astype('int')[valid]
+            x1 = np.ceil(xmeshrot).astype('int')[valid]
+            y0 = np.floor(ymeshrot).astype('int')[valid]
+            y1 = np.ceil(ymeshrot).astype('int')[valid]
 
             # import warnings
             # with warnings.catch_warnings():
@@ -299,8 +304,12 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
             #   xd = np.nan_to_num( ( xmeshrot - x0 ) / ( x1 - x0 ) )
             #   yd = np.nan_to_num( ( ymeshrot - y0 ) / ( y1 - y0 ) )
 
-            xd = xmeshrot - x0
-            yd = ymeshrot - y0
+            xd = xmeshrot[valid] - x0
+            yd = ymeshrot[valid] - y0
+            
+#             valid_y = np.logical_and(yd < ymeshmax, yd >= ymeshmin)
+#             valid_x = np.logical_and(xmeshrot < xmeshmax, xmeshrot >= xmeshmin)
+#             valid = np.logical_and(valid_y, valid_x)
 
             if interpolation == 'cosine':  # Smoother than trilinear at negligible extra computation cost?
 
@@ -318,8 +327,8 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
             # c = c0 * ( 1 - yd ) + c1 * yd
 
             # Below is the same as the commented above, but in one line:
-            rotimg = (img2[x0, y0] * (1 - xd) + img2[x1, y0] * xd) * \
-                (1 - yd) + (img2[x0, y1] * (1 - xd) + img2[x1, y1] * xd) * yd
+            rotimg[valid] = (img[x0, y0] * (1 - xd) + img[x1, y0] * xd) * \
+                (1 - yd) + (img[x0, y1] * (1 - xd) + img[x1, y1] * xd) * yd
 
     else:
 
@@ -351,17 +360,17 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
         # ymeshrot = zmesh * rotmat[0,1] + ymesh * rotmat[1,1] + xmesh * rotmat[2,1]
         # xmeshrot = zmesh * rotmat[0,2] + ymesh * rotmat[1,2] + xmesh * rotmat[2,2]
 
-        sqrt3 = np.sqrt(3)
 
-        zmeshrot = (sqrt3 * imsize[2] - imsize[2]) // 2 + zmesh * rotmat[0, 0] + \
+        zmeshrot = zmesh * rotmat[0, 0] + \
             ymesh * rotmat[1, 0] + xmesh * rotmat[2, 0] + imsize[2] // 2 - m[0]
-        ymeshrot = (sqrt3 * imsize[1] - imsize[1]) // 2 + zmesh * rotmat[0, 1] + \
+        ymeshrot = zmesh * rotmat[0, 1] + \
             ymesh * rotmat[1, 1] + xmesh * rotmat[2, 1] + imsize[1] // 2 - m[1]
-        xmeshrot = (sqrt3 * imsize[0] - imsize[0]) // 2 + zmesh * rotmat[0, 2] + \
+        xmeshrot = zmesh * rotmat[0, 2] + \
             ymesh * rotmat[1, 2] + xmesh * rotmat[2, 2] + imsize[0] // 2 - m[2]
 
-        img2 = Resize(img, newsize=imsize * sqrt3 + 1)
-        del img
+        valid = np.zeros(img.shape, dtype='bool')
+        imsizemax = imsize[0]
+        ne.evaluate("zmeshrot**2 + ymeshrot**2 + xmeshrot**2 <= imsizemax**2", out=valid)
 
         # zmeshrot = ( 2 * imsize[2] - imsize[2] )//2 + zmesh * rotmat[0,0] + ymesh * rotmat[1,0] + xmesh * rotmat[2,0] + imsize[2]//2 - m[0]
         # ymeshrot = ( 2 * imsize[1] - imsize[1] )//2 + zmesh * rotmat[0,1] + ymesh * rotmat[1,1] + xmesh * rotmat[2,1] + imsize[1]//2 - m[1]
@@ -373,21 +382,21 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
         # print ymeshrot.min(),ymeshrot.max()
         # print zmeshrot.min(),zmeshrot.max()
 
-        rotimg = np.zeros(img2.shape)
+        rotimg = np.zeros(img.shape)
 
         if interpolation == 'nearest':
 
-            rotimg = img2[np.round(xmeshrot).astype('int'), np.round(
-                ymeshrot).astype('int'), np.round(zmeshrot).astype('int')]
+            rotimg[valid] = img[np.round(xmeshrot[valid]).astype('int'), np.round(
+                ymeshrot[valid]).astype('int'), np.round(zmeshrot[valid]).astype('int')]
 
         else:
 
-            x0 = np.floor(xmeshrot).astype('int')
-            x1 = np.ceil(xmeshrot).astype('int')
-            y0 = np.floor(ymeshrot).astype('int')
-            y1 = np.ceil(ymeshrot).astype('int')
-            z0 = np.floor(zmeshrot).astype('int')
-            z1 = np.ceil(zmeshrot).astype('int')
+            x0 = np.floor(xmeshrot).astype('int')[valid]
+            x1 = np.ceil(xmeshrot).astype('int')[valid]
+            y0 = np.floor(ymeshrot).astype('int')[valid]
+            y1 = np.ceil(ymeshrot).astype('int')[valid]
+            z0 = np.floor(zmeshrot).astype('int')[valid]
+            z1 = np.ceil(zmeshrot).astype('int')[valid]
 
             # import warnings
             # with warnings.catch_warnings():
@@ -396,9 +405,9 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
             #   xd = np.nan_to_num( ( xmeshrot - x0 ) / ( x1 - x0 ) )
             #   yd = np.nan_to_num( ( ymeshrot - y0 ) / ( y1 - y0 ) )
             #   zd = np.nan_to_num( ( zmeshrot - z0 ) / ( z1 - z0 ) )
-            xd = xmeshrot - x0
-            yd = ymeshrot - y0
-            zd = zmeshrot - z0
+            xd = xmeshrot[valid] - x0
+            yd = ymeshrot[valid] - y0
+            zd = zmeshrot[valid] - z0
 
             # print zd.shape,z0.shape,z1.shape
             # print zd
@@ -430,11 +439,11 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
             # c = c0 * ( 1 - zd ) + c1 * zd
 
             # Below is the same as the commented above, but in one line:
-            rotimg = ((img2[x0, y0, z0] * (1 - xd) + img2[x1, y0, z0] * xd) * (1 - yd) + (img2[x0, y1, z0] * (1 - xd) + img2[x1, y1, z0] * xd) * yd) * (
-                1 - zd) + ((img2[x0, y0, z1] * (1 - xd) + img2[x1, y0, z1] * xd) * (1 - yd) + (img2[x0, y1, z1] * (1 - xd) + img2[x1, y1, z1] * xd) * yd) * zd
+            rotimg[valid] = ((img[x0, y0, z0] * (1 - xd) + img[x1, y0, z0] * xd) * (1 - yd) + (img[x0, y1, z0] * (1 - xd) + img[x1, y1, z0] * xd) * yd) * (
+                1 - zd) + ((img[x0, y0, z1] * (1 - xd) + img[x1, y0, z1] * xd) * (1 - yd) + (img[x0, y1, z1] * (1 - xd) + img[x1, y1, z1] * xd) * yd) * zd
 
-    del img2
-    rotimg = Resize(rotimg, newsize=imsize)
+#     del img2
+#     rotimg = Resize(rotimg, newsize=imsize)
 
     if pad != 1:
 
@@ -445,8 +454,6 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
         rotimg = rotimg.reshape((imsize_ori[0], imsize_ori[1], imsize_ori[2]))
 
     return rotimg
-    # return Resample( rotimg, apix=1.0 / pad_factor, newapix=1.0 )
-
 # def RotateFFT( img, rot = [0,0,0], interpolation='trilinear', pad=1, do_sinc=True ):
 
 
@@ -1696,8 +1703,8 @@ def Project(img, pose=[0, 0, 0, 0, 0], interpolation='trilinear', pad=2, do_sinc
     ymesh = np.fft.ifftshift(ymesh)
 #   zmesh = np.fft.ifftshift( zmesh )
 
-    Fslice *= np.exp(-2.0 * pi * 1j *
-                     (shift[0] * xmesh / imsizepad[0] + shift[1] * ymesh / imsizepad[1]))
+    Fshift = np.exp(-2.0 * pi * 1j * (shift[0] * xmesh / imsizepad[0] + shift[1] * ymesh / imsizepad[1]))
+    Fslice = Fslice * Fshift
 
     # Direct CTF correction would invert the image contrast. By default we don't do that, hence the negative sign:
     CTFim = np.fft.fftshift(CTF(
