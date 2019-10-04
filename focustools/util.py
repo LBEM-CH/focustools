@@ -201,7 +201,7 @@ def Shift(img, shift=[0, 0, 0]):
 
 
 # def Rotate( img, rot = [0,0,0], interpolation='trilinear', pad=1, do_sinc=True ):
-def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
+def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1, rfft=False ):
     # Rotates a 2D image or 3D volume
     # Rotation array 'rot' is given in SPIDER conventions (ZYZ rotation): PHI, THETA, PSI - same as in relion_rotate
     # Interpolation can be 'nearest' (fast but poor), 'trilinear' (slower but better) or 'cosine' (slightly slower than trilinear and maybe slightly worse - not clear)
@@ -253,6 +253,11 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
             "Object should have 2 or 3 dimensions: len(img.shape) = %d " % len(imsize))
 
     imsize = np.array(img.shape) * pad
+
+    if rfft:
+
+        imsize[-1] = ( imsize[-1] - imsize[-1] % 2 ) * 2
+
     if pad != 1:
 
         img = Resample(img, newsize=imsize)
@@ -261,23 +266,48 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
 
     if len(imsize) == 2:
 
-        [xmesh, ymesh] = np.mgrid[-imsize[0] // 2 + m[0]
-            :(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(imsize[1] - 1) // 2 + 1]
         psi = rot[0]
 
         rotmat = np.matrix([[np.cos(psi), -np.sin(psi)],
                             [np.sin(psi), np.cos(psi)]])
 
-        ymeshrot = ymesh * \
-            rotmat[0, 0] + xmesh * rotmat[1, 0] + imsize[1] // 2 - m[1]
-        xmeshrot = ymesh * \
-            rotmat[0, 1] + xmesh * rotmat[1, 1] + imsize[0] // 2 - m[0]
+        if not rfft:
 
-        rotimg = np.zeros(img.shape)
+            [xmesh, ymesh] = np.mgrid[-imsize[0] // 2 + m[0]
+                :(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(imsize[1] - 1) // 2 + 1]
+            
+            ymeshrot = ymesh * \
+                rotmat[0, 0] + xmesh * rotmat[1, 0] + imsize[1] // 2 - m[1]
+            xmeshrot = ymesh * \
+                rotmat[0, 1] + xmesh * rotmat[1, 1] + imsize[0] // 2 - m[0]
+
+            imsizemax = imsize[0]
+
+        else:
+
+            [xmesh, ymesh] = np.mgrid[-imsize[0] // 2 + m[0]
+                :(imsize[0] - 1) // 2 + 1, 0:imsize[1] // 2 + 1]
+            xmesh = np.fft.ifftshift(xmesh)
+
+            ymeshrot = ymesh * \
+                rotmat[0, 0] + xmesh * rotmat[1, 0] - m[1]
+            xmeshrot = ymesh * \
+                rotmat[0, 1] + xmesh * rotmat[1, 1] - m[0]
+
+            imsizemax = imsize[0] // 2
+
+            # Hermitian symmetry of real input FT! We cannot lose data over the edges!
+            xmeshrot[ymeshrot < 0] = -xmeshrot[ymeshrot < 0]
+            ymeshrot[ymeshrot < 0] = -ymeshrot[ymeshrot < 0]
+
+        # [xmesh, ymesh] = np.mgrid[-imsize[0] // 2 + m[0]
+        #     :(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(imsize[1] - 1) // 2 + 1]
         
         valid = np.zeros(img.shape, dtype='bool')
-        imsizemax = imsize[0]
+
         ne.evaluate("ymeshrot**2 + xmeshrot**2 <= imsizemax**2", out=valid)
+
+        rotimg = np.zeros(img.shape)
         
 #         plt.imshow(valid,cmap=cm.gray)
 
@@ -332,13 +362,6 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
 
     else:
 
-        [xmesh, ymesh, zmesh] = np.mgrid[-imsize[0] // 2 + m[0]:(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(
-            imsize[1] - 1) // 2 + 1, -imsize[2] // 2 + m[2]:(imsize[2] - 1) // 2 + 1]
-
-        # print xmesh.min(),xmesh.max()
-        # print ymesh.min(),ymesh.max()
-        # print zmesh.min(),zmesh.max()
-
         phi = rot[0]
         theta = rot[1]
         psi = rot[2]
@@ -351,6 +374,48 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
                           [-np.sin(phi), np.cos(phi), 0], [0, 0, 1]])
         rotmat = mat1 * mat2 * mat3
 
+        if not rfft:
+
+            [xmesh, ymesh, zmesh] = np.mgrid[-imsize[0] // 2 + m[0]:(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(
+                imsize[1] - 1) // 2 + 1, -imsize[2] // 2 + m[2]:(imsize[2] - 1) // 2 + 1]
+
+            zmeshrot = zmesh * rotmat[0, 0] + \
+                ymesh * rotmat[1, 0] + xmesh * rotmat[2, 0] + imsize[2] // 2 - m[0]
+            ymeshrot = zmesh * rotmat[0, 1] + \
+                ymesh * rotmat[1, 1] + xmesh * rotmat[2, 1] + imsize[1] // 2 - m[1]
+            xmeshrot = zmesh * rotmat[0, 2] + \
+                ymesh * rotmat[1, 2] + xmesh * rotmat[2, 2] + imsize[0] // 2 - m[2]
+
+            imsizemax = imsize[0]
+
+        else:
+
+            [xmesh, ymesh, zmesh] = np.mgrid[-imsize[0] // 2 + m[0]:(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(
+                imsize[1] - 1) // 2 + 1, 0:imsize[2] // 2 + 1]
+            xmesh = np.fft.ifftshift(xmesh)
+            ymesh = np.fft.ifftshift(ymesh)
+
+            zmeshrot = zmesh * rotmat[0, 0] + \
+                ymesh * rotmat[1, 0] + xmesh * rotmat[2, 0] - m[0]
+            ymeshrot = zmesh * rotmat[0, 1] + \
+                ymesh * rotmat[1, 1] + xmesh * rotmat[2, 1] - m[1]
+            xmeshrot = zmesh * rotmat[0, 2] + \
+                ymesh * rotmat[1, 2] + xmesh * rotmat[2, 2] - m[2]
+
+            imsizemax = imsize[0] // 2
+
+            # Hermitian symmetry of real input FT! We cannot lose data over the edges!
+            xmeshrot[zmeshrot < 0] = -xmeshrot[zmeshrot < 0]
+            ymeshrot[zmeshrot < 0] = -ymeshrot[zmeshrot < 0]
+            zmeshrot[zmeshrot < 0] = -zmeshrot[zmeshrot < 0]
+
+        # [xmesh, ymesh, zmesh] = np.mgrid[-imsize[0] // 2 + m[0]:(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(
+            # imsize[1] - 1) // 2 + 1, -imsize[2] // 2 + m[2]:(imsize[2] - 1) // 2 + 1]
+
+        # print xmesh.min(),xmesh.max()
+        # print ymesh.min(),ymesh.max()
+        # print zmesh.min(),zmesh.max()
+
         # print phi,theta,rot
         # print rotmat
         # print imsize
@@ -361,15 +426,7 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
         # xmeshrot = zmesh * rotmat[0,2] + ymesh * rotmat[1,2] + xmesh * rotmat[2,2]
 
 
-        zmeshrot = zmesh * rotmat[0, 0] + \
-            ymesh * rotmat[1, 0] + xmesh * rotmat[2, 0] + imsize[2] // 2 - m[0]
-        ymeshrot = zmesh * rotmat[0, 1] + \
-            ymesh * rotmat[1, 1] + xmesh * rotmat[2, 1] + imsize[1] // 2 - m[1]
-        xmeshrot = zmesh * rotmat[0, 2] + \
-            ymesh * rotmat[1, 2] + xmesh * rotmat[2, 2] + imsize[0] // 2 - m[2]
-
         valid = np.zeros(img.shape, dtype='bool')
-        imsizemax = imsize[0]
         ne.evaluate("zmeshrot**2 + ymeshrot**2 + xmeshrot**2 <= imsizemax**2", out=valid)
 
         # zmeshrot = ( 2 * imsize[2] - imsize[2] )//2 + zmesh * rotmat[0,0] + ymesh * rotmat[1,0] + xmesh * rotmat[2,0] + imsize[2]//2 - m[0]
@@ -458,6 +515,7 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
 
 
 def RotateFFT(img, rot=[0, 0, 0], interpolation='trilinear', pad=1):
+    # ATTENTION: This is deprecated since the introduction of the 'rfft' option in Rotate()
     # Same as Rotate() function but doing the rotation in Fourier space with the required special treatments
 
     imsize = np.array(img.shape)
@@ -1633,7 +1691,7 @@ def ResolutionAtThreshold(freq, fsc, thr, interp=True, nyquist_is_fine=False, ):
     return 1 / res_freq
 
 
-def Project(img, pose=[0, 0, 0, 0, 0], interpolation='trilinear', pad=2, do_sinc=True, res_max=-1, apix=-1, is_fft=False, DF1=1000.0, DF2=None, AST=0.0, WGH=0.10, invert_contrast=False, Cs=2.7, kV=300.0, phase_flip=False, ctf_multiply=False):
+def Project(img, pose=[0, 0, 0, 0, 0], interpolation='trilinear', pad=2, do_sinc=True, res_max=-1, apix=-1, is_fft=False, DF1=1000.0, DF2=None, AST=0.0, WGH=0.10, invert_contrast=False, Cs=2.7, kV=300.0, phase_flip=False, ctf_multiply=False ):
     # Projects a 3D volume to a 2D image, with optional CTF correction
     # Consistent with relion_project
     # is_fft to be used if the input is already an FFT (with fftshift applied!)
@@ -1651,7 +1709,7 @@ def Project(img, pose=[0, 0, 0, 0, 0], interpolation='trilinear', pad=2, do_sinc
 
     if not is_fft:
 
-        if pad != 1:
+        if pad > 1:
 
             img = Resize(img, newsize=imsize * pad)
 
@@ -1676,7 +1734,8 @@ def Project(img, pose=[0, 0, 0, 0, 0], interpolation='trilinear', pad=2, do_sinc
         del img
 
         # Do the actual FFT of the input
-        F = np.fft.fftshift(np.fft.fftn(imgpad))
+        # F = np.fft.fftshift(np.fft.fftn(imgpad))
+        F = np.fft.rfftn(imgpad)
         imsizepad = np.array(imgpad.shape)
         del imgpad
 
@@ -1686,53 +1745,62 @@ def Project(img, pose=[0, 0, 0, 0, 0], interpolation='trilinear', pad=2, do_sinc
         imsizepad = imsize
 
     # Do the actual rotation of the FFT
-    Frot = Rotate(F, rot, interpolation=interpolation, pad=1)
+    Frot = Rotate(F, rot, interpolation=interpolation, pad=1, rfft=True )
     del F
 
 # Calculate the projection:
     # Extract the central slice (i.e. projection for weak-phase object approximation)
-    Fslice = Frot[imsizepad[0] // 2, :, :]
-    del Frot
+    # Fslice = Frot[imsizepad[0] // 2, :, :]
+    Fslice = Frot[0, :, :]
+    # del Frot
+
 
 # Below, zmesh is ignored because the projection is invariant to shifts along Z- (and translations are applied AFTER rotation):
+    imsizepad = imsizepad[1:]
     m = np.mod(imsizepad, 2)  # Check if dimensions are odd or even
     [xmesh, ymesh] = np.mgrid[-imsizepad[0] // 2 + m[0]
-        :(imsizepad[0] - 1) // 2 + 1, -imsizepad[1] // 2 + m[1]:(imsizepad[1] - 1) // 2 + 1]
-#   [xmesh, ymesh,zmesh] = np.mgrid[-imsizepad[0]//2+m[0]:(imsizepad[0]-1)//2+1, -imsizepad[1]//2+m[1]:(imsizepad[1]-1)//2+1, -imsizepad[2]//2+m[2]:(imsizepad[2]-1)//2+1]
+        :(imsizepad[0] - 1) // 2 + 1, 0:imsizepad[1] // 2 + 1]
     xmesh = np.fft.ifftshift(xmesh)
-    ymesh = np.fft.ifftshift(ymesh)
-#   zmesh = np.fft.ifftshift( zmesh )
+#     [xmesh, ymesh] = np.mgrid[-imsizepad[0] // 2 + m[0]
+#         :(imsizepad[0] - 1) // 2 + 1, -imsizepad[1] // 2 + m[1]:(imsizepad[1] - 1) // 2 + 1]
+# #   [xmesh, ymesh,zmesh] = np.mgrid[-imsizepad[0]//2+m[0]:(imsizepad[0]-1)//2+1, -imsizepad[1]//2+m[1]:(imsizepad[1]-1)//2+1, -imsizepad[2]//2+m[2]:(imsizepad[2]-1)//2+1]
+#     xmesh = np.fft.ifftshift(xmesh)
+#     ymesh = np.fft.ifftshift(ymesh)
+# #   zmesh = np.fft.ifftshift( zmesh )
 
     Fshift = np.exp(-2.0 * pi * 1j * (shift[0] * xmesh / imsizepad[0] + shift[1] * ymesh / imsizepad[1]))
     Fslice = Fslice * Fshift
 
     # Direct CTF correction would invert the image contrast. By default we don't do that, hence the negative sign:
-    CTFim = np.fft.fftshift(CTF(
-        Fslice.shape, DF1, DF2, AST, WGH, Cs, kV, apix, 0.0, rfft=False))
+    # CTFim = np.fft.fftshift(CTF(Fslice.shape, DF1, DF2, AST, WGH, Cs, kV, apix, 0.0, rfft=False))
 
     if invert_contrast:
 
-        CTFim *= -1.0
+        Fslice *= -1.0
 
     if phase_flip:  # Phase-flipping
 
+        CTFim = CTF(Fslice.shape, DF1, DF2, AST, WGH, Cs, kV, apix, 0.0, rfft=True)
         Fslice *= np.sign(CTFim)
 
     if ctf_multiply:  # CTF multiplication
 
+        CTFim = CTF(Fslice.shape, DF1, DF2, AST, WGH, Cs, kV, apix, 0.0, rfft=True)
         Fslice *= CTFim
 
     # if res_max > 0.0:
 
-    lowpass = SoftMask(Fslice.shape, radius=np.min(
-        Fslice.shape) * apix / res_max, width=0, rfft=False)
-    Fslice *= lowpass
-    del lowpass
+    if res_max > 0:
+
+        lowpass = SoftMask([imsizepad[0], imsizepad[0]], radius=imsizepad[0] * apix / res_max, width=0, rfft=True)
+        Fslice *= lowpass
+        del lowpass
 
     if not is_fft:
 
         # FFT-back the result to real space
-        I = np.fft.ifftn(np.fft.ifftshift(Fslice)).real
+        # I = np.fft.ifftn(np.fft.ifftshift(Fslice)).real
+        I = np.fft.irfftn(Fslice).real
         del Fslice
 
         # Undo the initial FFT-shift in real space and crop to the original size of the input

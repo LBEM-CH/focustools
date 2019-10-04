@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+
+import sys
+import os
+import numpy as np
+# import matplotlib.pyplot as plt
+from focustools import util
+from mrcz import ioMRC
+from optparse import OptionParser
+
+
+def main():
+
+    progname = os.path.basename(sys.argv[0])
+    usage = progname + """ <input.mrc> <output.mrc> [options] 
+
+	Projects a 3D map onto a 2D image.
+
+	For reporting bugs and requesting features, please refer to:
+
+	http://www.focus-em.org
+	http://github.com/C-CINA/focus
+
+	"""
+
+    parser = OptionParser(usage)
+
+    parser.add_option("--angpix", metavar=1.0, type="float",
+                      help="Original pixel size in Angstroems. If ommited, will attempt to read from the input file header.", default=None)
+
+    parser.add_option("--rot", metavar=0.0, type="float",
+                      help="First Euler angle (for a single projection)", default=0.0)
+
+    parser.add_option("--tilt", metavar=0.0, type="float",
+                      help="Second Euler angle (for a single projection)", default=0.0)
+
+    parser.add_option("--psi", metavar=0.0, type="float",
+                      help="Third Euler angle (for a single projection)", default=0.0)
+
+    parser.add_option("--xoff", metavar=0.0, type="float",
+                      help="Origin X-offsets (in pixels) (for a single projection), can be fractional.", default=0.0)
+
+    parser.add_option("--yoff", metavar=0.0, type="float",
+                      help="Origin Y-offsets (in pixels) (for a single projection), can be fractional.", default=0.0)
+
+    parser.add_option("--pad", metavar=2, type="float",
+                      help="Padding factor", default=2)
+
+    parser.add_option("--maxres", metavar=-1, type="float",
+                      help="Maximum resolution (in Angstrom) to consider in Fourier space (default Nyquist)", default=-1)
+
+    parser.add_option("--dont_sinc", action="store_false", default=True,
+                      help="Don't apply sinc pre-correction to input map")
+
+    parser.add_option("--nearest", action="store_true", default=False,
+                      help="Use nearest-neighbor instead of trilinear interpolation.")
+
+    (options, args) = parser.parse_args()
+
+    command = ' '.join(sys.argv)
+
+    mrcin = args[0]
+    mrcout = args[1]
+
+    hedin = ioMRC.readMRCHeader(mrcin, slices=None)[0]
+
+    if options.angpix == None:
+
+        options.angpix = hedin['pixelsize'][0]
+        print(
+            "\nNo pixel size specified! Assuming pixel size of %.3f A from file header." % options.angpix)
+
+    if options.maxres <= 0.0:
+
+    	options.maxres = 2 * options.angpix
+
+    if not options.nearest:
+
+    	interp = 'trilinear'
+
+    else:
+
+    	interp = 'nearest'
+
+    mrc,hed = ioMRC.readMRC(mrcin)
+
+    proj = util.Project(mrc[0], pose=[options.rot, options.tilt, options.psi, options.xoff, options.yoff], interpolation=interp, pad=options.pad, do_sinc=options.dont_sinc,
+                        res_max=options.maxres, apix=options.angpix, is_fft=False, DF1=1000.0, DF2=None, AST=0.0, WGH=0.10, invert_contrast=False, Cs=2.7, kV=300.0, phase_flip=False, ctf_multiply=False)
+
+    sys.stdout = open(os.devnull, "w")  # Suppress output
+    ioMRC.writeMRC(proj, mrcout, dtype='float32',
+                   pixelsize=options.angpix, quickStats=False)
+    sys.stdout = sys.__stdout__
+
+    print('\nDone!')
+
+
+if __name__ == "__main__":
+    main()

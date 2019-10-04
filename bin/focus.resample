@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+#############################################################################
+#                                                                           #
+# Script to compress/decompress MRC files using MRCZ                        #
+#                                                                           #
+# (C) focus-em.org, GNU Public License.                                     #
+#                                                                           #
+# Created..........: 20/09/2017                                             #
+# Last Modification: 20/09/2019                                             #
+# Author...........: Ricardo Righetto                                       #
+#                                                                           #
+# This Python script is distributed with the Focus package                  #
+# under the terms of the GNU Public License.                                #
+#                                                                           #
+#############################################################################
+
+import sys
+import os
+from focustools import util
+import mrcz
+from optparse import OptionParser
+
+
+def main():
+
+	progname = os.path.basename(sys.argv[0])
+	usage = progname + """ <mrc(s) file> [options]
+
+	Given a list of MRC(Z) files, will Fourier resample them to a new user-defined pixel size or new box size.
+	The output can be saved with MRCZ compression.
+
+	"""
+
+	parser = OptionParser(usage)
+	
+	parser.add_option("--angpix", metavar=1.0, type="float", help="Pixel size in Angstroems")
+
+	parser.add_option("--newangpix", metavar=2.0, type="float", help="New pixel size in Angstroems")
+
+	parser.add_option("--newsize", metavar="128,128[,128]", default=None, type="string", help="Two or three numbers describing a new box size for resampling the input volumes or images.")
+
+	parser.add_option("--stack", default=False, action="store_true", help="Use this option if the input is a stack of 2D images. NOTE: in this case, on-the-fly compression is not supported (but you can use focus.mrcz afterwards to compress the stack).")
+
+	parser.add_option("--suffix", metavar='resampled', type="string", default="resampled", help="Will add this suffix to the output files.")
+
+	parser.add_option("--outdir", metavar='output/', type="string", default=".", help="Output files will be stored in this location.")
+
+	parser.add_option("--compressor", metavar='zstd', type="string", default=None,
+					  help="Will use this compressor to save the output. Options are: blosclz, lz4, lz4hc, zlib, zstd or None (default).")
+
+
+	(options, args) = parser.parse_args()
+
+	command = ' '.join(sys.argv)
+
+	if options.suffix != "":
+
+		options.suffix = '_'+options.suffix
+
+	if options.compressor == "None":
+
+		options.compressor = None
+
+	if options.compressor == None:
+
+		ext = '.mrc'
+
+	else:
+
+		ext = '.mrcz'
+
+	if options.newsize != None:
+
+		options.newsize = np.array(list(map(float, options.newsize.split(','))))
+
+	for file in args:
+
+		# file = os.path.abspath(file)
+		# dirname = os.path.dirname(file)
+		filename = os.path.basename(file)
+		# ext = os.path.splitext(filename)[-1]
+		filename = os.path.splitext(filename)[0]
+
+		if not options.stack:
+
+			mrcin,hed = mrcz.ioMRC.readMRC(file)
+
+			mrcout = []
+			for mrcmap in mrcin:
+
+				mrc_resampled = util.Resample( mrcmap, newsize=options.newsize, apix=options.angpix, newapix=options.newangpix )
+				mrcout.append( mrc_resampled )
+
+			mrcz.writeMRC(mrcout, options.outdir+'/'+filename+options.suffix+ext, compressor=options.compressor)
+
+		else:
+
+			mrcin,hed = mrcz.ioMRC.readMRC(file)
+
+			for mrcs in mrcin:
+
+				for i in range( hed['dimensions'][0] ):
+
+					mrc_resampled = util.Resample( mrcs[i,:,:], newsize=options.newsize, apix=options.angpix, newapix=options.newangpix )
+					mrcz.writeMRC(mrc_resampled, options.outdir+'/'+filename+options.suffix+ext, compressor=None, idx=i, pixelsize=options.newangpix )
+
+if __name__ == "__main__":
+	main()

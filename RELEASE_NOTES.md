@@ -1,3 +1,11 @@
+# 0.2.0 (Unreleased)
+
+* Renamed `bin/focus.ctfapply` to `bin/focus.ctf`
+* Added option `--randomize_beyond` to `focus.postprocess`
+* Added options `--transparent` and `--svg` to `focus.ctf`
+* Included `bin/focus.resample`
+* Included `bin/focus.project`
+
 # 0.1.4
 
 Fixed default argument bugs in `AutoMask()` of `focustools/util.py`

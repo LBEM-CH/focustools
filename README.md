@@ -1,5 +1,5 @@
 # FOCUS TOOLS
-Python utilities supporting the [FOCUS package](http://focus-em.org) and cryo-EM data processing in general.
+Python utilities supporting the [FOCUS package](http://focus-em.org) and cryo-EM data processing tasks.
 
 __FOCUS TOOLS__ offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the scripts and functions contained here were developed to support the FOCUS package. Others were written for the developer's own studies or mere convenience, and are made available here in the hope they can be useful to someone else.
 
@@ -10,9 +10,9 @@ Where possible, tasks are accelerated by the [NumExpr](https://github.com/pydata
 ## Installation
 __FOCUS TOOLS__ can be installed from [PyPI](http://pypi.org) using `pip`:
 
-`sudo pip install focustools`
+`pip install focustools`
 
-If not using `sudo`, it will be installed locally in the user `HOME`. In this case, make sure you have the following location in your `PATH` environment variable in order to be able to call the scripts directly:
+If not using `sudo` (like above), it will be installed locally in the user `HOME`. In this case, make sure you have the following location in your `PATH` environment variable in order to be able to call the scripts directly:
 `~/.local/bin/`
 
 ## Contents
