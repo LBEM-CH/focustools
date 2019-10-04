@@ -297,8 +297,10 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1, rfft=False ):
             imsizemax = imsize[0] // 2
 
             # Hermitian symmetry of real input FT! We cannot lose data over the edges!
-            xmeshrot[ymeshrot < 0] = -xmeshrot[ymeshrot < 0]
-            ymeshrot[ymeshrot < 0] = -ymeshrot[ymeshrot < 0]
+            ymeshidx = ymeshrot < 0
+            xmeshrot[ymeshidx] = -xmeshrot[ymeshidx]
+            ymeshrot[ymeshidx] = -ymeshrot[ymeshidx]
+            del ymeshidx
 
         # [xmesh, ymesh] = np.mgrid[-imsize[0] // 2 + m[0]
         #     :(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(imsize[1] - 1) // 2 + 1]
@@ -405,9 +407,11 @@ def Rotate(img, rot=[0, 0, 0], interpolation='trilinear', pad=1, rfft=False ):
             imsizemax = imsize[0] // 2
 
             # Hermitian symmetry of real input FT! We cannot lose data over the edges!
-            xmeshrot[zmeshrot < 0] = -xmeshrot[zmeshrot < 0]
-            ymeshrot[zmeshrot < 0] = -ymeshrot[zmeshrot < 0]
-            zmeshrot[zmeshrot < 0] = -zmeshrot[zmeshrot < 0]
+            zmeshidx = zmeshrot < 0
+            xmeshrot[zmeshidx] = -xmeshrot[zmeshidx]
+            ymeshrot[zmeshidx] = -ymeshrot[zmeshidx]
+            zmeshrot[zmeshidx] = -zmeshrot[zmeshidx]
+            del zmeshidx
 
         # [xmesh, ymesh, zmesh] = np.mgrid[-imsize[0] // 2 + m[0]:(imsize[0] - 1) // 2 + 1, -imsize[1] // 2 + m[1]:(
             # imsize[1] - 1) // 2 + 1, -imsize[2] // 2 + m[2]:(imsize[2] - 1) // 2 + 1]
