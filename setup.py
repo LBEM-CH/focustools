@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 name = 'focustools'
-version = '0.2.1'
+version = '0.2.2'
 
 description = 'Python utilities supporting the FOCUS package and cryo-EM data processing in general.'
 long_description = '''FOCUSTOOLS offers Python functions and scripts for performing common tasks in cryogenic electron microscopy (cryo-EM) data processing such as postprocessing 3D maps, filtering, masking, computing FSC curves, cropping/padding in real and Fourier space, CTF correction, among others. Some of the scripts and functions contained here were developed to support the FOCUS package. Others were written for the developer's own studies or mere convenience, and are made available here in the hope they can be useful to someone else.

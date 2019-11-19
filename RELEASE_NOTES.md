@@ -1,6 +1,10 @@
+# 0.2.2
+
+* Fixed bug in `focus.postprocess` (reading masks)
+
 # 0.2.1
 
-* Fixed bug in `focus.postprocess`
+* Fixed bug in `focus.postprocess` (reading half-maps)
 
 # 0.2.0
 
