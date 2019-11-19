@@ -499,7 +499,7 @@ def main():
     if options.mask != None:
 
         sys.stdout = open(os.devnull, "w")  # Suppress output
-        maskfile = ioMRC.readMRC(options.mask, slices=0)[0]
+        maskfile = ioMRC.readMRC(options.mask)[0]
         sys.stdout = sys.__stdout__
 
     else:
