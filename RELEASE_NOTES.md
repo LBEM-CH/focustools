@@ -1,4 +1,8 @@
-# 0.2.0 (Unreleased)
+# 0.2.1
+
+* Fixed bug in `focus.postprocess`
+
+# 0.2.0
 
 * Renamed `bin/focus.ctfapply` to `bin/focus.ctf`
 * Added option `--randomize_beyond` to `focus.postprocess`

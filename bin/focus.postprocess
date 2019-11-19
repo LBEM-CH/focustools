@@ -428,9 +428,9 @@ def main():
 
     # Read in the two maps:
     sys.stdout = open(os.devnull, "w")  # Suppress output
-    map1 = ioMRC.readMRC(args[0], slices=0)[0]
+    map1 = ioMRC.readMRC(args[0])[0]
     if len(args) > 1:
-        map2 = ioMRC.readMRC(args[1], slices=0)[0]
+        map2 = ioMRC.readMRC(args[1])[0]
     else:
         map2 = map1
     sys.stdout = sys.__stdout__

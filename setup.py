@@ -36,7 +36,7 @@ setup(
         'numpy>=1.11',
         'numexpr',
         'matplotlib',
-        'mrcz>=0.5.2',
+        'mrcz>=0.5.3',
         'packaging',
         'blosc',
     ],
