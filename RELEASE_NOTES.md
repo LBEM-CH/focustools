@@ -1,3 +1,7 @@
+# 0.2.3
+
+* Fixed error in CTF formula of `CTF()` of `focustools/util.py` - thanks to Harshit Gupta for spotting it
+
 # 0.2.2
 
 * Fixed bug in `focus.postprocess` (reading masks)
