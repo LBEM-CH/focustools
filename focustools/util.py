@@ -1983,7 +1983,7 @@ def Fsc2Xml(filename, x, y):
     f.close()
 
 def CTF(imsize=[100, 100], DF1=1000.0, DF2=None, AST=0.0, WGH=0.10, Cs=2.7, kV=300.0, apix=1.0, B=0.0, rfft=True):
-    # Generates 2D CTF function
+    # Generates 1D, 2D or 3D CTF function
     # Underfocus is positive following conventions of FREALIGN and most of the packages out there (in Angstroms).
     # B is B-factor
     # rfft is to compute only half of the FFT (i.e. real data) if True, or the full FFT if False.
@@ -2032,23 +2032,24 @@ def CTF(imsize=[100, 100], DF1=1000.0, DF2=None, AST=0.0, WGH=0.10, Cs=2.7, kV=3
 
         else:
 
-            # rmesh,amesh = focus_utilities.RadialIndices( imsize, RFFT=True )
-            xmesh = np.fft.fftfreq(imsize[0])
-            if rfft:
-                ymesh = np.fft.rfftfreq(imsize[1])
-            else:
-                ymesh = np.fft.fftfreq(imsize[1])
+            rmesh, amesh = RadialIndices( imsize, normalize=True, rfft=rfft )
+            rmesh2 = ne.evaluate( "rmesh**2 / apix**2" )
+#             xmesh = np.fft.fftfreq(imsize[0])
+#             if rfft:
+#                 ymesh = np.fft.rfftfreq(imsize[1])
+#             else:
+#                 ymesh = np.fft.fftfreq(imsize[1])
 
-            xmeshtile = np.tile(xmesh, [len(ymesh), 1]).T
-            ymeshtile = np.tile(ymesh, [len(xmesh), 1])
+#             xmeshtile = np.tile(xmesh, [len(ymesh), 1]).T
+#             ymeshtile = np.tile(ymesh, [len(xmesh), 1])
 
-            # rmesh = np.sqrt(xmeshtile * xmeshtile +
-            #                 ymeshtile * ymeshtile) / apix
-            rmesh = ne.evaluate("sqrt(xmeshtile * xmeshtile + ymeshtile * ymeshtile) / apix")
+#             # rmesh = np.sqrt(xmeshtile * xmeshtile +
+#             #                 ymeshtile * ymeshtile) / apix
+#             rmesh = ne.evaluate("sqrt(xmeshtile * xmeshtile + ymeshtile * ymeshtile) / apix")
 
-            amesh = np.nan_to_num(ne.evaluate("arctan2(ymeshtile, xmeshtile)"))
+#             amesh = np.nan_to_num(ne.evaluate("arctan2(ymeshtile, xmeshtile)"))
 
-        rmesh2 = ne.evaluate("rmesh * rmesh")
+        # rmesh2 = ne.evaluate("rmesh * rmesh")
 
         # From Mindell & Grigorieff, JSB 2003:
         DF = ne.evaluate("0.5 * (DF1 + DF2 + (DF1 - DF2) * cos(2.0 * (amesh - AST)))")
