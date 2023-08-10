@@ -1356,15 +1356,15 @@ def FCC(volume1, volume2, phiArray=[0.0], invertCone=False):
         # zmesh = np.fft.ifftshift( zmesh )
         # ymesh = np.fft.ifftshift( ymesh )
 
-        rhomax = np.int(
+        rhomax = int(
             np.ceil(np.sqrt(M * M / 4.0 + N * N / 4.0 + P * P / 4.0)) + 1)
         # if xy_only:
         #   zmesh *= 0
-        #   rhomax = np.int( np.ceil( np.sqrt( N*N/4.0 + P*P/4.0) ) + 1 )
+        #   rhomax = int( np.ceil( np.sqrt( N*N/4.0 + P*P/4.0) ) + 1 )
         # if z_only:
         #   xmesh *= 0
         #   ymesh *= 0
-        #   rhomax = rhomax = np.int( np.ceil( np.sqrt( M*M/4.0 ) ) + 1 )
+        #   rhomax = rhomax = int( np.ceil( np.sqrt( M*M/4.0 ) ) + 1 )
         rhomesh = ne.evaluate(
             "sqrt(xmesh * xmesh + ymesh * ymesh + zmesh * zmesh)")
         phimesh = ne.evaluate("arccos(zmesh / rhomesh)")
@@ -1375,7 +1375,7 @@ def FCC(volume1, volume2, phiArray=[0.0], invertCone=False):
 
         [M, N] = volume1.shape
         [ymesh, xmesh] = np.mgrid[-M / 2:M / 2, -N / 2:N / 2]
-        rhomax = np.int(np.ceil(np.sqrt(M * M / 4.0 + N * N / 4.0)) + 1)
+        rhomax = int(np.ceil(np.sqrt(M * M / 4.0 + N * N / 4.0)) + 1)
         rhomesh = ne.evaluate("sqrt(xmesh * xmesh + ymesh * ymesh)")
         phimesh = ne.evaluate("arctan2(ymesh, xmesh)")
         phimesh[M // 2, N // 2] = 0.0
@@ -1389,7 +1389,7 @@ def FCC(volume1, volume2, phiArray=[0.0], invertCone=False):
     phiArray = ne.evaluate("phiArray * pi / 180.0")
 
     rhoround = np.round(rhomesh.ravel()).astype('int')  # Indices for bincount
-    # rhomax = np.int( np.ceil( np.sqrt( M*M/4.0 + N*N/4.0 + P*P/4.0) ) + 1 )
+    # rhomax = int( np.ceil( np.sqrt( M*M/4.0 + N*N/4.0 + P*P/4.0) ) + 1 )
 
     fft1 = np.ravel(np.fft.fftshift(np.fft.fftn(volume1))).astype('complex128')
     conj_fft2 = np.ravel(np.fft.fftshift(
